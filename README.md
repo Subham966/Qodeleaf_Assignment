@@ -544,8 +544,17 @@ groups:
 ```
 
 # Integrate Alertmanager:
-
 Configure Alertmanager for Slack, email, or webhook alerts.
 
-# 
-# 
+# Delete the EKS Cluster with eksctl:
+```bash
+eksctl delete cluster --region ap-south-1 --name proj-eks
+helm uninstall prometheus -n monitoring
+kubectl delete namespace monitoring
+kubectl delete pvc --all -n monitoring
+kubectl delete pv --all
+aws elb describe-load-balancers --region ap-south-1
+aws elb delete-load-balancer --load-balancer-name <lb-name>
+```
+![image](https://github.com/user-attachments/assets/1c0233c7-7651-4dca-9b7b-3c8940dfd0c9)
+
