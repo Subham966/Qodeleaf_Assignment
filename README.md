@@ -296,7 +296,7 @@ Create a Helm chart for your application.
 Example values.yaml:
 ```bash
 image:
-  repository: <account-id>.dkr.ecr.<region>.amazonaws.com/backend-app
+  repository: 183631343762.dkr.ecr.ap-south-1.amazonaws.com/myproj/task
   tag: latest
 
 service:
@@ -308,6 +308,55 @@ deployment:
 ```
 
 # Deploy with Helm:
+```bash
+deploymemt.yml
+```
+```bash
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Chart.Name }}
+  labels:
+    app: {{ .Chart.Name }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Chart.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Chart.Name }}
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: 3000
+```
+![image](https://github.com/user-attachments/assets/1fd47ea1-3a09-47f9-8a31-533e9bf4ce36)
+
+```bash
+service.yml
+```
+```bash
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Chart.Name }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: 3000
+  selector:
+    app: {{ .Chart.Name }}
+
+```
+
+![image](https://github.com/user-attachments/assets/5abe5da5-3c50-4272-a016-4bead7c52afb)
+
 ```bash
 helm install backend-app ./chart
 ```
