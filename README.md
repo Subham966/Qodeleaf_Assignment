@@ -7,21 +7,27 @@
 
 # Step 2: Create the Project
 Create a New Project Folder:
-
+```bash
 mkdir backend-crud
 cd backend-crud
-
+```
 
 # Initialize a Node.js Project:
+```bash
 npm init -y
+```
 This creates a package.json file, which will manage your project dependencies.
 ![alt text](image-2.png)
 
 # Install Express:
+```bash
 npm install express
+```
 ![alt text](image-3.png)
 
+```bash
 http://localhost:3000/users
+```
 ![alt text](image-4.png)
 
 Inside Postman:
@@ -40,7 +46,7 @@ Delete User:
 
 
 # Prepare a Dockerfile:
-
+```bash
 FROM node:18-alpine
 WORKDIR /app
 COPY package*.json ./
@@ -48,16 +54,19 @@ RUN npm install
 COPY . .
 EXPOSE 3000
 CMD ["node", "index.js"]
-
+```
 
 
 # Run Locally:
-
+```bash
 docker build -t backend-app .
+```
 ![alt text](image-13.png)
 ![alt text](image-19.png)
 
+```bash
 docker run -p 3000:3000 backend-app
+```
 ![alt text](image-14.png)
 
 
@@ -66,7 +75,7 @@ docker run -p 3000:3000 backend-app
 
 # Docker Compose: 
 Create a docker-compose.yml to run the backend service with the database locally.
-
+```bash
 version: "3.8"
 services:
   backend:
@@ -83,7 +92,7 @@ services:
       POSTGRES_DB: mydb
     ports:
       - "5432:5432"
-
+```
 ![alt text](image-23.png)
 ![alt text](image-24.png)
 
@@ -103,7 +112,7 @@ services:
 # 2. CI/CD Configuration
 Set up CI pipeline using GitHub Actions.
 Build Docker Image on Push: Example GitHub Actions workflow:
-
+```bash
 name: Build and Push Docker Image
 on:
   push:
@@ -124,18 +133,20 @@ jobs:
         run: docker build -t username/backend-app:latest .
       - name: Push Docker Image
         run: docker push username/backend-app:latest
-
+```
 
 # Add the following secrets in GitHub:
+```bash
 AWS_ACCESS_KEY_ID
 AWS_SECRET_ACCESS_KEY
 AWS_REGION
+```
 
 
 # Step 4: Kubernetes Deployment
 Create an EKS Cluster:
 Use AWS Management Console or Terraform to create an EKS cluster.
-
+```bash
 provider "aws" {
   region = "us-east-1"
 }
@@ -147,18 +158,18 @@ module "eks" {
   subnets = ["subnet-1", "subnet-2"]
   vpc_id = "vpc-12345"
 }
-
+```
 
 # Configure kubectl:
 Update kubeconfig to connect to the cluster:
-
+```bash
 aws eks --region <region> update-kubeconfig --name backend-app-cluster
-
+```
 # Deploy Backend Using Helm:
 Create a Helm chart for your application.
 
 Example values.yaml:
-
+```bash
 image:
   repository: <account-id>.dkr.ecr.<region>.amazonaws.com/backend-app
   tag: latest
@@ -169,39 +180,40 @@ service:
 
 deployment:
   replicas: 2
-
+```
 
 # Deploy with Helm:
-
+```bash
 helm install backend-app ./chart
-
+```
 # Step 5: Monitoring with Prometheus
 Install Prometheus:
 Add Prometheus Helm repository:
-
+```bash
 helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
 helm repo update
-
+```
 # Install Prometheus:
+```bash
 helm install prometheus prometheus-community/prometheus
-
+```
 # Expose Metrics:
 Add metrics collection to the backend (using prom-client for Node.js or prometheus-client for Python).
 Create a /metrics endpoint in the backend.
 
 # Update Prometheus Config:
 Add a scrape config to values.yaml for Prometheus:
-
+```bash
 scrape_configs:
   - job_name: backend-app
     static_configs:
       - targets: ['backend-app.default.svc.cluster.local:3000']
-
+```
 
 # Set Up Alerts:
 
 Add rules in Prometheus:
-
+```bash
 groups:
   - name: backend-alerts
     rules:
@@ -219,7 +231,7 @@ groups:
           severity: critical
         annotations:
           summary: "Instance is down"
-
+```
 
 # Integrate Alertmanager:
 
