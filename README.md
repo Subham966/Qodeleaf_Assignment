@@ -168,18 +168,118 @@ AWS_REGION
 Create an EKS Cluster:
 Use AWS Management Console or Terraform to create an EKS cluster.
 ```bash
+# provider block for AWS
 provider "aws" {
   region = "us-east-1"
 }
 
-module "eks" {
-  source = "terraform-aws-modules/eks/aws"
-  cluster_name = "backend-app-cluster"
-  cluster_version = "1.24"
-  subnets = ["subnet-1", "subnet-2"]
-  vpc_id = "vpc-12345"
+# Create VPC for the EKS cluster
+resource "aws_vpc" "eks_vpc" {
+  cidr_block = "10.0.0.0/16"
+  enable_dns_support = true
+  enable_dns_hostnames = true
+  tags = {
+    Name = "eks-vpc"
+  }
 }
+
+# Create subnets for the EKS cluster
+resource "aws_subnet" "eks_subnet_a" {
+  vpc_id = aws_vpc.eks_vpc.id
+  cidr_block = "10.0.1.0/24"
+  availability_zone = "us-east-1a"
+  map_public_ip_on_launch = true
+  tags = {
+    Name = "eks-subnet-a"
+  }
+}
+
+resource "aws_subnet" "eks_subnet_b" {
+  vpc_id = aws_vpc.eks_vpc.id
+  cidr_block = "10.0.2.0/24"
+  availability_zone = "us-east-1b"
+  map_public_ip_on_launch = true
+  tags = {
+    Name = "eks-subnet-b"
+  }
+}
+
+# Security Group for the EKS cluster
+resource "aws_security_group" "eks_security_group" {
+  vpc_id = aws_vpc.eks_vpc.id
+
+  egress {
+    cidr_blocks = ["0.0.0.0/0"]
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+  }
+
+  ingress {
+    cidr_blocks = ["0.0.0.0/0"]
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+  }
+
+  tags = {
+    Name = "eks-sg"
+  }
+}
+
+# Create the EKS Cluster
+module "eks" {
+  source          = "terraform-aws-modules/eks/aws"
+  cluster_name    = "backend-app-cluster"
+  cluster_version = "1.24"
+  subnets         = [aws_subnet.eks_subnet_a.id, aws_subnet.eks_subnet_b.id]
+  vpc_id          = aws_vpc.eks_vpc.id
+
+  node_groups = {
+    eks_nodes = {
+      desired_capacity = 2
+      max_capacity     = 3
+      min_capacity     = 1
+
+      instance_type = "t3.medium"
+      key_name      = "my-ec2-key"  # Replace with your EC2 Key Pair name
+    }
+  }
+
+  node_security_group = aws_security_group.eks_security_group.id
+}
+
+# Output the EKS cluster details
+output "cluster_endpoint" {
+  value = module.eks.cluster_endpoint
+}
+
+output "cluster_id" {
+  value = module.eks.cluster_id
+}
+
+output "cluster_name" {
+  value = module.eks.cluster_name
+}
+
 ```
+```bash
+terraform init
+terraform plan
+terraform apply
+```
+
+||  OR  ||
+```bash
+eksctl create cluster --version 1.28 --region ap-south-1 --name proj-eks --nodes 2 --nodes-min 2 --nodes-max 2 --nodegroup-name proj-node-group --managed
+kubectl get nodes
+kubectl get pods -n kube-system
+```
+![image](https://github.com/user-attachments/assets/45185bd1-8d28-43c9-a275-67cba480fdd1)
+![image](https://github.com/user-attachments/assets/9d0a9ec7-4d4c-40ef-89e8-f10dde4d9340)
+![image](https://github.com/user-attachments/assets/63180e05-6429-4fc1-b901-547c89da0396)
+
+
 
 # Configure kubectl:
 Update kubeconfig to connect to the cluster:
@@ -188,6 +288,10 @@ aws eks --region <region> update-kubeconfig --name backend-app-cluster
 ```
 # Deploy Backend Using Helm:
 Create a Helm chart for your application.
+
+![image](https://github.com/user-attachments/assets/9db90bd5-da7e-414f-941d-4adff1d9dfd7)
+
+
 
 Example values.yaml:
 ```bash
@@ -207,6 +311,9 @@ deployment:
 ```bash
 helm install backend-app ./chart
 ```
+
+![image](https://github.com/user-attachments/assets/8e6947dd-2153-4a0c-a955-c24513338979)
+
 # Step 5: Monitoring with Prometheus
 Install Prometheus:
 Add Prometheus Helm repository:
@@ -214,6 +321,9 @@ Add Prometheus Helm repository:
 helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
 helm repo update
 ```
+
+![image](https://github.com/user-attachments/assets/c3ca77be-51c2-4823-89e0-9814c54179ae)
+
 # Install Prometheus:
 ```bash
 helm install prometheus prometheus-community/prometheus
