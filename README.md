@@ -17,32 +17,41 @@ cd backend-crud
 npm init -y
 ```
 This creates a package.json file, which will manage your project dependencies.
-![alt text](image-2.png)
+![image](https://github.com/user-attachments/assets/8b9efcdb-36bf-45d3-991c-8db39b5068dc)
+
 
 # Install Express:
 ```bash
 npm install express
 ```
-![alt text](image-3.png)
+![image](https://github.com/user-attachments/assets/3125865a-9463-4b35-bd1b-6f0c3811f066)
+
 
 ```bash
 http://localhost:3000/users
 ```
-![alt text](image-4.png)
+![image](https://github.com/user-attachments/assets/9640ae43-36e3-4c25-bde7-7900a9d2064b)
+
 
 Inside Postman:
 Current User:
-![alt text](image-5.png)
+![image](https://github.com/user-attachments/assets/e9400b6e-462d-4fdc-af3d-a84c321b39e7)
 
 Add Users:
-![alt text](image-6.png)
-![alt text](image-7.png)
-![alt text](image-10.png)
+![image](https://github.com/user-attachments/assets/e44d0f5c-ef3e-4941-b4b0-c68629b0816d)
+
+![image](https://github.com/user-attachments/assets/af4c4903-b9e8-4fcd-9bb3-1bcf09f3e844)
+
+![image](https://github.com/user-attachments/assets/990b3a10-db53-416e-84ce-cb84b39856b2)
+
 
 Delete User:
-![alt text](image-8.png)
-![alt text](image-9.png)
-![alt text](image-11.png)
+![image](https://github.com/user-attachments/assets/5d946287-fcbc-41f2-8abb-b0bbe69f0d1c)
+
+![image](https://github.com/user-attachments/assets/df33b716-998d-4478-8ade-ca0f72ee19d3)
+
+![image](https://github.com/user-attachments/assets/09811df9-8d23-41dd-a1a8-5b0b491d6bac)
+
 
 
 # Prepare a Dockerfile:
@@ -61,17 +70,21 @@ CMD ["node", "index.js"]
 ```bash
 docker build -t backend-app .
 ```
-![alt text](image-13.png)
-![alt text](image-19.png)
+![image](https://github.com/user-attachments/assets/4597547c-78d2-47d0-ac47-fca21dc0e9de)
+
+![image](https://github.com/user-attachments/assets/690bb9d0-cca4-4c65-a655-40ab4283d61f)
+
 
 ```bash
 docker run -p 3000:3000 backend-app
 ```
-![alt text](image-14.png)
+![image](https://github.com/user-attachments/assets/3941fcd8-e625-4fa2-9251-b21998bcef65)
+
 
 
 # AWS CONFIGURE:
-![alt text](image-12.png)
+![image](https://github.com/user-attachments/assets/cdb02029-d294-40c8-b195-322880bdf293)
+
 
 # Docker Compose: 
 Create a docker-compose.yml to run the backend service with the database locally.
@@ -93,19 +106,27 @@ services:
     ports:
       - "5432:5432"
 ```
-![alt text](image-23.png)
-![alt text](image-24.png)
+![image](https://github.com/user-attachments/assets/bbf1302d-1ffe-408c-bd74-4a642c7e26c4)
+
+![image](https://github.com/user-attachments/assets/2ea8f488-2bfc-4f14-b0da-852283a909df)
+
 
 # ECR Setup:
-![alt text](image-15.png)
-![alt text](image-16.png)
-![alt text](image-17.png)
-![alt text](image-18.png)
+![image](https://github.com/user-attachments/assets/6316f7df-3709-41a9-837b-5d8aca4493f1)
+
+![image](https://github.com/user-attachments/assets/f1e54370-09c1-4285-b871-4dbfeffd949f)
+
+![image](https://github.com/user-attachments/assets/e2a86eec-2ff7-4ae3-b739-616aae687c33)
+
+![image](https://github.com/user-attachments/assets/39aaf636-0b1a-40b3-9ddc-e8ec08060c9b)
+
 
 # Push the Docker image to ECR:
-![alt text](image-20.png)
-![alt text](image-21.png)
-![alt text](image-22.png)
+![image](https://github.com/user-attachments/assets/3912faa4-1228-4ad5-8be3-fe3550656c5b)
+
+![image](https://github.com/user-attachments/assets/d8910ae8-f90e-4650-9283-5cdfaf29d261)
+![image](https://github.com/user-attachments/assets/26ce1383-46de-48c2-8d47-0497f603353b)
+
 
 
 
