@@ -1,0 +1,10 @@
+image:
+  repository: 183631343762.dkr.ecr.ap-south-1.amazonaws.com/myproj/task
+  tag: latest
+
+service:
+  type: LoadBalancer
+  port: 3000
+
+deployment:
+  replicas: 2
