@@ -316,18 +316,141 @@ helm install backend-app ./chart
 
 # Step 5: Monitoring with Prometheus
 Install Prometheus:
-Add Prometheus Helm repository:
 ```bash
-helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
-helm repo update
+helm install prometheus prometheus-community/prometheus --namespace pro
+metheus --create-namespacehelm repo update
 ```
 
-![image](https://github.com/user-attachments/assets/c3ca77be-51c2-4823-89e0-9814c54179ae)
+![image](https://github.com/user-attachments/assets/a8c229db-7920-4b0f-9d6c-74b91781b969)
 
-# Install Prometheus:
+
 ```bash
-helm install prometheus prometheus-community/prometheus
+kubectl get pods -n prometheus -w
 ```
+![image](https://github.com/user-attachments/assets/c00fba88-de9f-46a0-a393-ee9033a47d86)
+
+```bash
+kubectl get pods -n prometheus --show-labels
+kubectl get svc -n prometheus
+```
+![image](https://github.com/user-attachments/assets/be99e2c4-180f-433a-80f4-d5eefdceb4e9)
+
+```bash
+kubectl edit svc/prometheus-prometheus-pushgateway -n prometheus
+```
+
+```bash
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    meta.helm.sh/release-name: prometheus
+    meta.helm.sh/release-namespace: prometheus
+    prometheus.io/probe: pushgateway
+  creationTimestamp: "2024-11-20T09:06:46Z"
+  finalizers:
+  - service.kubernetes.io/load-balancer-cleanup
+  labels:
+    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: prometheus-pushgateway
+    app.kubernetes.io/version: v1.10.0
+    helm.sh/chart: prometheus-pushgateway-2.15.0
+  name: prometheus-prometheus-pushgateway
+  namespace: prometheus
+  resourceVersion: "12175"
+  uid: afc54073-94aa-424e-987a-b2248046195c
+spec:
+  allocateLoadBalancerNodePorts: true
+  clusterIP: 10.100.80.89
+  clusterIPs:
+  - 10.100.80.89
+  externalTrafficPolicy: Cluster
+  internalTrafficPolicy: Cluster
+  ipFamilies:
+  - IPv4
+  ipFamilyPolicy: SingleStack
+  ports:
+  - name: http
+    nodePort: 30639
+    port: 9091
+    protocol: TCP
+    targetPort: 9091
+  selector:
+    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/name: prometheus-pushgateway
+  sessionAffinity: None
+  type: LoadBalancer
+status:
+  loadBalancer:
+    ingress:
+    - hostname: aafc5407394aa424e987ab2248046195-2004446049.ap-south-1.elb.amazonaws.com
+
+
+```
+
+
+```bash
+kubectl edit svc/prometheus-server -n prometheus
+```
+
+```bash
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    meta.helm.sh/release-name: prometheus
+    meta.helm.sh/release-namespace: prometheus
+  creationTimestamp: "2024-11-20T09:06:46Z"
+  finalizers:
+  - service.kubernetes.io/load-balancer-cleanup
+  labels:
+    app.kubernetes.io/component: server
+    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: prometheus
+    app.kubernetes.io/part-of: prometheus
+    app.kubernetes.io/version: v2.55.1
+    helm.sh/chart: prometheus-25.30.1
+  name: prometheus-server
+  namespace: prometheus
+  resourceVersion: "12794"
+  uid: da967f83-cfd3-4a88-86b4-e4c62ec34529
+spec:
+  allocateLoadBalancerNodePorts: true
+  clusterIP: 10.100.145.166
+  clusterIPs:
+  - 10.100.145.166
+  externalTrafficPolicy: Cluster
+  internalTrafficPolicy: Cluster
+  ipFamilies:
+  - IPv4
+  ipFamilyPolicy: SingleStack
+  ports:
+  - name: http
+    nodePort: 31030
+    port: 80
+    protocol: TCP
+    targetPort: 9090
+  selector:
+    app.kubernetes.io/component: server
+    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/name: prometheus
+  sessionAffinity: None
+  type: LoadBalancer
+status:
+  loadBalancer:
+    ingress:
+    - hostname: ada967f83cfd34a8886b4e4c62ec3452-1251613006.ap-south-1.elb.amazonaws.com
+
+```
+
+```bash
+kubectl get svc -n prometheus
+```
+![image](https://github.com/user-attachments/assets/e4b4fda5-cbd4-4752-abdd-8e2d14ef1cd2)
+
+
 # Expose Metrics:
 Add metrics collection to the backend (using prom-client for Node.js or prometheus-client for Python).
 Create a /metrics endpoint in the backend.
