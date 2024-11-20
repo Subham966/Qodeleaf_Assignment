@@ -512,6 +512,13 @@ scrape_configs:
     static_configs:
       - targets: ['backend-app.default.svc.cluster.local:3000']
 ```
+![image](https://github.com/user-attachments/assets/bf2b83f1-94d0-433f-9ae5-2aa777e0234c)
+
+
+# TEST CRUD Opearations using Thunder Client:
+![image](https://github.com/user-attachments/assets/c8aadf15-e405-452f-af16-b9eaebae62f8)
+
+![image](https://github.com/user-attachments/assets/0cda814f-37db-4512-a621-c742c5fb116a)
 
 # Set Up Alerts:
 
