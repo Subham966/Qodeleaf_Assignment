@@ -556,5 +556,6 @@ kubectl delete pv --all
 aws elb describe-load-balancers --region ap-south-1
 aws elb delete-load-balancer --load-balancer-name <lb-name>
 ```
-![image](https://github.com/user-attachments/assets/1c0233c7-7651-4dca-9b7b-3c8940dfd0c9)
+![image](https://github.com/user-attachments/assets/599da97a-0506-4d0a-bb74-62f5afe8b718)
+
 
